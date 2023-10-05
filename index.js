@@ -3,7 +3,7 @@ const axios = require('axios')
 const fs = require('fs')
 const { parsePhoneNumberFromString } = require('libphonenumber-js');
 let scrapping = true
-const startingLinks = ['https://paystack.com/contact']
+const startingLinks = ['https://www.naijaloaded.com.ng/contact-us']
 const maxLinks = 500
 let wordsArray = []
 const linksScrapped = []
@@ -41,7 +41,6 @@ const removeLink = (arr,link) => {
   let index = arr.indexOf(link);
   arr.splice(index, 1);
   index--
-  // console.log('removed link: ' + link);
 }
 
 const extractLink = async(link) => {
@@ -69,8 +68,14 @@ const isValidEmail = (text) => {
 }
 
 const isValidPhoneNumber = (text) => {
-  const parsedNumber = parsePhoneNumberFromString(text);
-  const otherNumberPattern = /^0[7-9]\d{9}$/;
+  const parsedNumber = parsePhoneNumberFromString(text)
+  const mainNopattern = /(\+\d{1,}\s\d{1,}-\d{1,}-\d{1,})/
+  const otherNumberPattern = /^0[7-9]\d{9}$/
+
+  if (mainNopattern.test(text)) {
+    console.log(`${text} is a valid phone number.`);
+    return true
+  } 
 
   if (otherNumberPattern.test(text)) {
     console.log(`${text} is a valid phone number.`);
@@ -130,22 +135,19 @@ const processLinks = async(link) => {
     removeLink(startingLinks,link)
   }
 
+  (async () => {
+    while (scrapping && startingLinks.length <= maxLinks) {
+      const currentLink = startingLinks.shift()
+      if(!lookup(linksScrapped,currentLink)){
+        console.log(currentLink)
+        console.log('scraping started again');
+        await processLinks(currentLink)
+        console.log(`current link count: ${startingLinks.length}`)
+      }else{
+        console.log(`link: ${currentLink} already scraped `)
+      }
+    }
 
-  processLinks(startingLinks[0])
-  // (async () => {
-  //   while (scrapping && startingLinks.length <= maxLinks) {
-  //     const currentLink = startingLinks.shift()
-  //     if(!lookup(linksScrapped,currentLink)){
-  //       console.log(currentLink)
-  //       console.log('scraping started again');
-  //       await processLinks(currentLink)
-  //       console.log(`current link count: ${startingLinks.length}`)
-  //     }else{
-  //       console.log(`link: ${currentLink} already scraped `)
-  //     }
-  //   }
-
-  //   console.log(wordsArray.length)
-  //   console.log({phoneNumbers,emailCount})
-  // })();
-
+    console.log(wordsArray.length)
+    console.log({phoneNumbers,emailCount})
+  })();
