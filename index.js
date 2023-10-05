@@ -3,7 +3,7 @@ const axios = require('axios')
 const fs = require('fs')
 const { parsePhoneNumberFromString } = require('libphonenumber-js');
 let scrapping = true
-const startingLinks = ['https://www.naijaloaded.com.ng/contact-us']
+const startingLinks = ['https://www.gistlover.com/']
 const maxLinks = 500
 let wordsArray = []
 const linksScrapped = []
@@ -121,7 +121,7 @@ const processLinks = async(link) => {
             return [text];
           }
         }).flat().filter(Boolean);
-        console.log(cleanedTexts)
+        console.log(cleanedTexts.slice(-100))
         for(let i = 0; i < cleanedTexts.length;i++){
            let cleanedText = cleanedTexts[i];
            checkText(cleanedText)
@@ -148,6 +148,6 @@ const processLinks = async(link) => {
       }
     }
 
-    console.log(wordsArray.length)
     console.log({phoneNumbers,emailCount})
   })();
+ 
