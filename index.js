@@ -3,7 +3,7 @@ const axios = require('axios')
 const fs = require('fs')
 const { parsePhoneNumberFromString } = require('libphonenumber-js');
 let scrapping = true
-const startingLinks = ['https://trendybeatz.com/download-mp3/41330/davido-feel']
+const startingLinks = ['https://paystack.com/contact']
 const maxLinks = 500
 let wordsArray = []
 const linksScrapped = []
@@ -38,9 +38,10 @@ const loadHtml = async(link) => {
 }
 
 const removeLink = (arr,link) => {
-  const index = arr.indexOf(link);
+  let index = arr.indexOf(link);
   arr.splice(index, 1);
-  console.log('removed link: ' + link);
+  index--
+  // console.log('removed link: ' + link);
 }
 
 const extractLink = async(link) => {
@@ -51,6 +52,7 @@ const extractLink = async(link) => {
     $('a').each((index, element) => {
       const relativeLink = $(element).attr('href');
       const absoluteLink = new URL(relativeLink, link).href;
+      console.log(relativeLink)
       links.push(absoluteLink);
     })
     startingLinks.push(...links)
@@ -95,7 +97,7 @@ const checkText = (text) => {
       phoneNumbers++
     }
     
-    if(isValidEmail(text)){
+    else if(isValidEmail(text)){
       saveText(text,'email')
       emailCount++
     }
@@ -114,10 +116,12 @@ const processLinks = async(link) => {
             return [text];
           }
         }).flat().filter(Boolean);
+        console.log(cleanedTexts)
         for(let i = 0; i < cleanedTexts.length;i++){
            let cleanedText = cleanedTexts[i];
            checkText(cleanedText)
-           removeLink(cleanedTexts,cleanedText)
+           cleanedTexts.splice(i, 1);
+           i--;
         }
       }
     }  
