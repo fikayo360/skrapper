@@ -85,7 +85,7 @@ const isValidPhoneNumber = (text) => {
 const saveText = (item,type) => {
   if(typeof item === 'string'){
     const textWithNewline = item + '\n';
-     type === 'email'? fs.appendFileSync('emails.txt', textWithNewline, 'utf8'): fs.appendFileSync('phoneNumbers.txt', textWithNewline, 'utf8');
+     type === 'email'? fs.appendFileSync('emails.txt', textWithNewline, 'utf8'): type === 'phone'? fs.appendFileSync('phoneNumbers.txt', textWithNewline, 'utf8'): () => {}
   }
 }
 
@@ -94,7 +94,8 @@ const checkText = (text) => {
       saveText(text,'phone')
       phoneNumbers++
     }
-    else{
+    
+    if(isValidEmail(text)){
       saveText(text,'email')
       emailCount++
     }
@@ -126,20 +127,21 @@ const processLinks = async(link) => {
   }
 
 
-  (async () => {
-    while (scrapping && startingLinks.length <= maxLinks) {
-      const currentLink = startingLinks.shift()
-      if(!lookup(linksScrapped,currentLink)){
-        console.log(currentLink)
-        console.log('scraping started again');
-        await processLinks(currentLink)
-        console.log(`current link count: ${startingLinks.length}`)
-      }else{
-        console.log(`link: ${currentLink} already scraped `)
-      }
-    }
+  processLinks(startingLinks[0])
+  // (async () => {
+  //   while (scrapping && startingLinks.length <= maxLinks) {
+  //     const currentLink = startingLinks.shift()
+  //     if(!lookup(linksScrapped,currentLink)){
+  //       console.log(currentLink)
+  //       console.log('scraping started again');
+  //       await processLinks(currentLink)
+  //       console.log(`current link count: ${startingLinks.length}`)
+  //     }else{
+  //       console.log(`link: ${currentLink} already scraped `)
+  //     }
+  //   }
 
-    console.log(wordsArray.length)
-    console.log({phoneNumbers,emailCount})
-  })();
+  //   console.log(wordsArray.length)
+  //   console.log({phoneNumbers,emailCount})
+  // })();
 
