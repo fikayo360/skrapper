@@ -31,7 +31,7 @@ const loadHtml = async(link) => {
       console.log(`Access to ${link} is forbidden. Skipping...`);
     }
      else {
-        throw error;
+        throw error
     }
    }
    
